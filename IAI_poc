@@ -1,4 +1,5 @@
 """
+IAI - AI 선택비서 (규칙 기반 PoC)
 
 - 기능: 사용자 입력 → 작업 카테고리 분류(키워드 규칙) → 카테고리별 대표 AI 도구 추천
 - 카테고리:
@@ -13,24 +14,29 @@
 
 from typing import List, Dict
 
-# 1. 카테고리별 추천 AI 도구 정보 정의
+# 1. 카테고리별 추천 AI 도구 정보 정의 (각 분야에서 많이 쓰이는 대표 툴 위주 셀렉션)
 ai_tools: Dict[str, List[Dict[str, str]]] = {
     # 회의/기록
     "meeting_summary": [
         {
             "name": "클로바노트",
-            "desc": "한국어 회의 녹음 자동 전사 및 요약 도구",
-            "strength": "국내 회의 환경(한국어 음성)에 최적화"
+            "desc": "한국어 회의 녹음을 자동으로 받아 적고 요약까지 만들어 주는 도구",
+            "strength": "국내 회의 환경(한국어 음성)에 최적화되어 팀플/스터디 회의 정리에 적합"
         },
         {
             "name": "Notion AI",
-            "desc": "노션 문서·회의록 요약 및 정리",
-            "strength": "노션 워크스페이스와 자연스럽게 통합"
+            "desc": "노션에 적어 둔 회의록·메모를 요약하고 할 일 목록 형태로 정리해 주는 도구",
+            "strength": "노션 워크스페이스와 자연스럽게 통합되어 이미 노션을 쓰는 팀에 특히 유용"
         },
         {
             "name": "Notta",
-            "desc": "화상회의 전사 및 요약 도구",
-            "strength": "Zoom·Meet 등 주요 회의 플랫폼 지원"
+            "desc": "화상회의를 자동으로 녹음·전사하고 핵심 내용만 골라 보여주는 회의 어시스턴트",
+            "strength": "Zoom·Google Meet 등 주요 회의 플랫폼을 지원해 온라인 회의가 많은 경우에 좋음"
+        },
+        {
+            "name": "Fireflies.ai",
+            "desc": "회의에 자동으로 참여해 녹음·전사하고 요약과 액션 포인트를 정리해 주는 도구",
+            "strength": "팀 단위로 회의 기록을 한 곳에 모으고 검색할 수 있어 협업에 강점"
         }
     ],
 
@@ -38,23 +44,23 @@ ai_tools: Dict[str, List[Dict[str, str]]] = {
     "document_writing": [
         {
             "name": "ChatGPT",
-            "desc": "리포트/에세이 초안 작성 및 문장 다듬기",
-            "strength": "범용 글쓰기와 아이디어 브레인스토밍에 강점"
+            "desc": "리포트/에세이 초안 작성부터 문장 다듬기까지 도와주는 범용 LLM",
+            "strength": "아이디어 브레인스토밍, 구조 잡기, 첫 초안 만들기에 특히 강함"
         },
         {
             "name": "Claude",
-            "desc": "긴 문서 이해 및 개요 정리에 특화된 LLM",
-            "strength": "장문 텍스트 요약·재구성에 유리"
+            "desc": "긴 문서 읽기·요약·재구성에 특화된 대화형 LLM",
+            "strength": "장문 텍스트를 자연스럽게 요약하고 개요 정리하는 데 유리"
         },
         {
-            "name": "Le Chat",
-            "desc": "일반 대화 및 문서 작성 보조 LLM",
-            "strength": "여러 언어를 지원하는 범용 어시스턴트"
+            "name": "Gemini",
+            "desc": "구글 계열 LLM으로, 검색·문서·슬라이드 등 구글 서비스와 함께 쓰기 좋은 도구",
+            "strength": "Gmail/Docs/Slides와 연동해 문서 작업을 한 번에 처리하기 좋음"
         },
         {
-            "name": "코파일럿(MS Copilot)",
-            "desc": "Office 작업 보조 AI",
-            "strength": "Word·PowerPoint·Excel과 통합된 문서 작업에 적합"
+            "name": "MS Copilot",
+            "desc": "Word·PowerPoint·Excel 등 오피스 작업을 도와주는 AI 보조 도구",
+            "strength": "기존 Office 문서를 그대로 활용하면서 요약·작성·정리를 맡길 수 있음"
         }
     ],
 
@@ -62,23 +68,23 @@ ai_tools: Dict[str, List[Dict[str, str]]] = {
     "image_generation": [
         {
             "name": "FLUX",
-            "desc": "고품질 이미지 생성 모델",
-            "strength": "디테일이 필요한 일러스트·아트워크에 적합"
+            "desc": "디테일이 살아 있는 고품질 이미지를 생성하는 모델 계열 도구",
+            "strength": "일러스트·컨셉 아트처럼 퀄리티가 중요한 작업에 적합"
         },
         {
             "name": "Ideogram",
-            "desc": "텍스트가 포함된 이미지 생성",
-            "strength": "포스터·타이포그래피 이미지에 강함"
+            "desc": "텍스트가 포함된 포스터·배너 이미지를 잘 만들어 주는 생성형 이미지 도구",
+            "strength": "한글/영문 텍스트가 들어간 썸네일·포스터 제작에 강점"
         },
         {
             "name": "ImageFX",
-            "desc": "구글 계열 이미지 생성 도구",
-            "strength": "간단한 프롬프트로 빠르게 시안 생성"
+            "desc": "구글 계열에서 제공하는 이미지 생성 도구",
+            "strength": "간단한 프롬프트만으로 빠르게 여러 시안을 뽑아보기 좋음"
         },
         {
-            "name": "미드저니(Midjourney)",
-            "desc": "디스코드 기반 고품질 이미지 생성",
-            "strength": "예술적 스타일 이미지에 강점"
+            "name": "Midjourney",
+            "desc": "디스코드 기반 고품질 이미지 생성 모델",
+            "strength": "예술적 스타일 이미지와 감성 있는 썸네일 제작에 많이 쓰임"
         }
     ],
 
@@ -86,23 +92,23 @@ ai_tools: Dict[str, List[Dict[str, str]]] = {
     "video": [
         {
             "name": "CapCut",
-            "desc": "템플릿 기반 동영상 편집 도구",
-            "strength": "쇼츠·틱톡 스타일 영상 제작에 적합"
+            "desc": "템플릿 기반으로 쇼츠·틱톡 스타일 영상을 빠르게 만들 수 있는 편집 도구",
+            "strength": "모바일/PC 모두 지원하며 자막·이펙트·템플릿이 풍부함"
         },
         {
             "name": "Vrew",
-            "desc": "자막 자동 생성 및 편집 도구",
-            "strength": "자막 작업과 간단 편집에 특화"
+            "desc": "음성을 자동으로 받아 적고 자막을 만들어 주는 영상 편집 도구",
+            "strength": "한국어 자막 작업과 간단한 컷 편집에 특히 편리"
         },
         {
             "name": "Veed",
-            "desc": "온라인 동영상 편집 및 텍스트 기반 편집",
-            "strength": "브라우저에서 바로 영상 제작 가능"
+            "desc": "브라우저에서 바로 쓸 수 있는 온라인 영상 편집 도구",
+            "strength": "설치 없이 웹에서 자막·효과·템플릿을 활용해 영상 제작 가능"
         },
         {
             "name": "Runway",
-            "desc": "AI 기반 영상 생성·편집 도구",
-            "strength": "텍스트→영상, 배경 제거 등 AI 기능 제공"
+            "desc": "텍스트→영상, 배경 제거 등 다양한 AI 기능을 제공하는 영상 도구",
+            "strength": "실사 느낌의 짧은 클립이나 실험적인 AI 영상을 만들 때 유용"
         }
     ],
 
@@ -110,23 +116,23 @@ ai_tools: Dict[str, List[Dict[str, str]]] = {
     "coding_automation": [
         {
             "name": "Cursor",
-            "desc": "AI 통합 코드 에디터",
-            "strength": "코드 이해·완성·리팩터링에 강점"
+            "desc": "에디터 안에서 코드 이해·작성·리팩터링을 도와주는 AI 통합 코드 에디터",
+            "strength": "프로젝트 전체 맥락을 보면서 코드를 제안해 주는 데 강점"
         },
         {
             "name": "Windsurf",
-            "desc": "AI 보조 개발 환경",
-            "strength": "프로젝트 단위 맥락 이해 및 코드 생성"
+            "desc": "대화형으로 코드베이스를 이해하고 수정할 수 있는 AI 개발 환경",
+            "strength": "레거시 코드 분석이나 리팩터링 작업에 도움됨"
         },
         {
-            "name": "Replit",
-            "desc": "온라인 IDE + AI 코드 보조",
-            "strength": "브라우저에서 빠르게 코드 작성·실행"
+            "name": "GitHub Copilot",
+            "desc": "IDE 안에서 자동 완성·코드 스니펫을 제안하는 AI 코드 보조 도구",
+            "strength": "자주 쓰는 패턴이나 반복 코드를 빠르게 작성할 수 있음"
         },
         {
-            "name": "Dify",
-            "desc": "워크플로우 자동화·에이전트 빌더",
-            "strength": "여러 도구를 연결해 자동화 파이프라인 구성"
+            "name": "Replit AI",
+            "desc": "브라우저 기반 IDE에서 바로 코드 작성을 도와주는 AI",
+            "strength": "설치 없이 웹에서 실습·토이 프로젝트를 만들 때 편리"
         }
     ],
 
@@ -134,23 +140,23 @@ ai_tools: Dict[str, List[Dict[str, str]]] = {
     "ppt_design": [
         {
             "name": "Canva",
-            "desc": "프레젠테이션·썸네일·SNS 디자인 도구",
-            "strength": "템플릿 기반으로 빠르게 결과물을 제작"
+            "desc": "프레젠테이션·썸네일·SNS 이미지를 템플릿 기반으로 만드는 디자인 도구",
+            "strength": "디자인을 잘 못해도 템플릿으로 빠르게 결과물을 뽑을 수 있음"
         },
         {
             "name": "Gamma",
-            "desc": "AI 프레젠테이션 생성 도구",
-            "strength": "텍스트에서 슬라이드를 자동 생성"
+            "desc": "텍스트 몇 줄만 넣으면 슬라이드 전체를 자동으로 만들어 주는 프레젠테이션 도구",
+            "strength": "기획서 초안을 빠르게 만들고 이후에 수정·보완하는 식으로 쓰기 좋음"
         },
         {
-            "name": "AIPPT",
-            "desc": "AI 기반 PPT 제작 도구",
-            "strength": "한글 사용자 친화적인 인터페이스"
+            "name": "Tome",
+            "desc": "스토리텔링 중심의 프레젠테이션을 생성해 주는 AI 도구",
+            "strength": "이미지·텍스트를 적절히 섞어 발표용 슬라이드를 자동 구성"
         },
         {
             "name": "Figma",
-            "desc": "UI/UX 및 디자인 툴",
-            "strength": "협업과 프로토타이핑에 강점"
+            "desc": "UI/UX 디자인과 프로토타입 제작에 쓰는 협업 디자인 툴",
+            "strength": "앱/웹 화면 설계와 컴포넌트 기반 디자인에 강점"
         }
     ],
 
@@ -158,18 +164,23 @@ ai_tools: Dict[str, List[Dict[str, str]]] = {
     "research": [
         {
             "name": "Perplexity",
-            "desc": "AI 기반 검색·리서치 어시스턴트",
-            "strength": "출처와 함께 답변을 제공하는 조사 작업에 적합"
-        },
-        {
-            "name": "Genspark",
-            "desc": "연구용 AI 검색 도구",
-            "strength": "논문·자료 조사에 특화된 검색 기능"
+            "desc": "웹 검색과 요약을 한 번에 해 주는 AI 리서치 어시스턴트",
+            "strength": "출처 링크와 함께 답변을 제공해 레포트·논문 자료 조사에 적합"
         },
         {
             "name": "NotebookLM",
-            "desc": "문서 기반 연구·요약 도구",
-            "strength": "업로드한 자료를 바탕으로 Q&A·요약 수행"
+            "desc": "자신이 올린 문서들을 기반으로 질의응답과 요약을 해 주는 구글의 연구 도구",
+            "strength": "자료를 업로드해 두고 그 안에서만 집중적으로 질문하고 정리할 수 있음"
+        },
+        {
+            "name": "Elicit",
+            "desc": "논문 검색과 요약에 특화된 AI 리서치 도구",
+            "strength": "연구 질문을 던지면 관련 논문과 핵심 내용을 표 형식으로 정리해 줌"
+        },
+        {
+            "name": "SciSpace",
+            "desc": "논문 내용을 쉽게 설명해 주고, 섹션별로 요약해 주는 도구",
+            "strength": "수식·그래프가 많은 논문을 읽을 때 이해를 돕기 좋음"
         }
     ]
 }
@@ -256,9 +267,9 @@ def recommend_tools(category: str) -> List[Dict[str, str]]:
 
 # 4. 전체 흐름 실행 함수 (입력 → 분류 → 추천 → 출력)
 
-def run_whichai_once():
-    print("===== WhichAI =====")
-    user_text = input("현재 하고 싶은 작업 상황을 자연어로 입력하세요:\n> ")
+def run_iai_once():
+    print("===== IAI - AI 선택비서 (규칙 기반 PoC) =====")
+    user_text = input("지금 뭐 하려고 하는지 편하게 한 줄로 써주세요 :)\n> ")
 
     # 1) 작업 카테고리 분류
     category = classify_task(user_text)
@@ -275,12 +286,11 @@ def run_whichai_once():
         return
 
     print("\n[추천 AI 도구]")
-    for i, tool in enumerate(tools, start=1):
+    for i, tool in enumerate(tools[:4], start=1):  # 최대 4개만 보여주기
         print(f"{i}. {tool['name']}")
         print(f"   - 설명: {tool['desc']}")
         print(f"   - 강점: {tool['strength']}\n")
 
 
 if __name__ == "__main__":
-    
-    run_whichai_once()
+    run_iai_once()
