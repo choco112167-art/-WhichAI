@@ -3,16 +3,22 @@ IAI - AI 선택비서
 
 - 기능: 사용자 입력 → 작업 카테고리 분류(키워드 규칙) → 카테고리별 대표 AI 도구 추천
 - 카테고리:
-    meeting_summary   : 회의/기록
-    document_writing  : 문서/글쓰기
-    image_generation  : 이미지 생성
-    video             : 동영상 생성/편집
-    coding_automation : 코드/자동화
-    ppt_design        : PPT 및 디자인
-    research          : 리서치/검색
+    meeting_summary        : 회의/기록
+    document_writing       : 문서/글쓰기
+    image_generation       : 이미지 생성
+    video                  : 동영상 생성/편집
+    coding_automation      : 코드/자동화
+    ppt_design             : PPT 및 디자인
+    research               : 리서치/검색
+    audio_music            : 음악/BGM 생성
+    tts_voice              : TTS / 보이스 클로닝
+    marketing_copy         : 마케팅 카피/랜딩페이지
+    social_content         : SNS/유튜브/쇼츠 콘텐츠
+    productivity_automation: 일정/업무 자동화
 """
 
 from typing import List, Dict
+
 
 # 1. 카테고리별 추천 AI 도구 정보 정의 (각 분야에서 많이 쓰이는 대표 툴 위주 셀렉션)
 ai_tools: Dict[str, List[Dict[str, str]]] = {
@@ -182,12 +188,121 @@ ai_tools: Dict[str, List[Dict[str, str]]] = {
             "desc": "논문 내용을 쉽게 설명해 주고, 섹션별로 요약해 주는 도구",
             "strength": "수식·그래프가 많은 논문을 읽을 때 이해를 돕기 좋음"
         }
+    ],
+
+    # 음악 / BGM 생성
+    "audio_music": [
+        {
+            "name": "Suno",
+            "desc": "텍스트 프롬프트만으로 멜로디와 보컬까지 들어간 완성형 노래를 만들어 주는 AI 음악 생성 도구",
+            "strength": "음악 지식이 없어도 장르·분위기·가사만 적으면 곡을 빠르게 뽑을 수 있어 커버송·밈송 만들 때 좋음"
+        },
+        {
+            "name": "Udio",
+            "desc": "팝·EDM 등 대중적인 스타일의 곡을 잘 만들어 주는 AI 음악 툴",
+            "strength": "짧은 프롬프트로도 자연스러운 곡 구조가 나와서 쇼츠·배경음악용으로 쓰기 좋음"
+        },
+        {
+            "name": "SOUNDRAW",
+            "desc": "영상·게임·브랜딩용으로 쓸 수 있는 로열티 프리 BGM을 생성해 주는 도구",
+            "strength": "길이·전개를 조절하면서 곡 구조를 세밀하게 편집할 수 있어 영상용 배경음악 제작에 적합"
+        },
+        {
+            "name": "AIVA",
+            "desc": "클래식/영화 음악 스타일의 연주곡을 만들어 주는 AI 작곡 도구",
+            "strength": "발표·게임·브금용으로 잔잔한 배경음악이 필요할 때 유용"
+        }
+    ],
+
+    # TTS / 보이스 클로닝 / 더빙
+    "tts_voice": [
+        {
+            "name": "ElevenLabs",
+            "desc": "자연스러운 음성을 여러 언어로 생성하고 특정 화자의 목소리를 클로닝할 수 있는 TTS 플랫폼",
+            "strength": "감정 표현이 살아 있는 나레이션·더빙용 음성을 만들기에 적합"
+        },
+        {
+            "name": "LOVO",
+            "desc": "한국어를 포함한 다양한 언어로 자연스러운 음성을 제공하는 TTS 서비스",
+            "strength": "광고·교육 영상·오디오북 등 상업용 콘텐츠에 쓸 수 있는 한국어 음성이 강점"
+        },
+        {
+            "name": "Murf",
+            "desc": "프레젠테이션·영상 더빙용으로 많이 쓰이는 TTS 도구",
+            "strength": "슬라이드/스크립트를 올려두고 바로 음성 나레이션을 입히기 편리"
+        },
+        {
+            "name": "Play.ht",
+            "desc": "팟캐스트급 퀄리티의 음성을 제공하는 TTS·보이스 클로닝 플랫폼",
+            "strength": "장시간 나레이션이 필요한 콘텐츠 제작에 적합"
+        }
+    ],
+
+    # 마케팅 카피 / 랜딩페이지 / 이메일
+    "marketing_copy": [
+        {
+            "name": "Jasper",
+            "desc": "광고 카피, 블로그 글, 랜딩페이지 텍스트를 만들어 주는 마케팅 특화 AI",
+            "strength": "톤·브랜드 가이드를 지정해 일관된 마케팅 문구를 대량으로 뽑기에 좋음"
+        },
+        {
+            "name": "Copy.ai",
+            "desc": "SNS 글, 광고 문구, 이메일 캠페인 문구를 생성하는 도구",
+            "strength": "다양한 템플릿이 있어 마케터가 빠르게 여러 버전의 카피를 테스트하기 편리"
+        },
+        {
+            "name": "Anyword",
+            "desc": "광고 성과 예측까지 해 주는 카피라이팅 도구",
+            "strength": "문구별 클릭·전환률 예측을 제공해 A/B 테스트 전에 방향을 잡을 수 있음"
+        }
+    ],
+
+    # SNS / 유튜브 / 쇼츠 콘텐츠
+    "social_content": [
+        {
+            "name": "OpusClip",
+            "desc": "긴 영상을 자동으로 잘라 쇼츠 형식의 클립을 뽑아 주는 도구",
+            "strength": "유튜브 풀영상을 업로드해 하이라이트 쇼츠를 한 번에 만들기 좋음"
+        },
+        {
+            "name": "VideoIdeas.ai",
+            "desc": "유튜브 영상 주제와 스크립트 아이디어를 만들어 주는 도구",
+            "strength": "채널 방향에 맞는 아이디어를 계속 뽑아줘서 초보 크리에이터에게 도움됨"
+        },
+        {
+            "name": "VUBO",
+            "desc": "쇼츠·틱톡 스타일 영상과 썸네일을 템플릿 기반으로 생성해 주는 플랫폼",
+            "strength": "여러 AI 모델을 묶어서 영상·자막·보이스오버를 한 번에 구성 가능"
+        }
+    ],
+
+    # 생산성 / 워크플로우 자동화
+    "productivity_automation": [
+        {
+            "name": "Zapier",
+            "desc": "여러 웹 서비스를 서로 연결해 자동으로 작업을 처리하는 워크플로우 툴",
+            "strength": "이메일·스프레드시트·채팅앱 등과 연동해 반복 업무를 줄일 수 있음"
+        },
+        {
+            "name": "Make",
+            "desc": "시각적인 플로우 차트로 자동화 시나리오를 구성하는 노코드 플랫폼",
+            "strength": "복잡한 분기 로직이 필요한 자동화도 드래그앤드롭으로 설계 가능"
+        },
+        {
+            "name": "Bardeen",
+            "desc": "브라우저에서 반복되는 작업을 자동으로 수행해 주는 데스크톱 자동화 도구",
+            "strength": "리서치·데이터 수집처럼 마우스 클릭이 많은 일을 줄이는 데 적합"
+        },
+        {
+            "name": "Notis",
+            "desc": "메신저에서 자연어로 지시하면 툴 스택 전반의 잡일을 대신 처리해 주는 AI 에이전트",
+            "strength": "CRM 업데이트, 일정 등록, 문서 정리 등 여러 도구를 하나의 채팅 인터페이스에서 제어 가능"
+        }
     ]
 }
 
 
 # 2. 규칙 기반 작업 분류기 (키워드 → 카테고리)
-
 KEYWORDS_TO_CATEGORY = {
     # 회의/기록
     "회의": "meeting_summary",
@@ -213,7 +328,7 @@ KEYWORDS_TO_CATEGORY = {
     "썸네일": "image_generation",
     "사진": "image_generation",
 
-    # 동영상
+    # 동영상 / SNS (겹치지만 우선 video로)
     "영상": "video",
     "동영상": "video",
     "쇼츠": "video",
@@ -224,7 +339,6 @@ KEYWORDS_TO_CATEGORY = {
     "코드": "coding_automation",
     "코딩": "coding_automation",
     "프로그래밍": "coding_automation",
-    "자동화": "coding_automation",
     "스크립트": "coding_automation",
     "봇": "coding_automation",
 
@@ -241,12 +355,45 @@ KEYWORDS_TO_CATEGORY = {
     "리서치": "research",
     "조사": "research",
     "자료조사": "research",
-    "논문": "research"
+    "논문": "research",
+
+    # 음악 / 오디오
+    "음악": "audio_music",
+    "노래": "audio_music",
+    "bgm": "audio_music",
+    "브금": "audio_music",
+
+    # 음성 / TTS / 더빙
+    "tts": "tts_voice",
+    "보이스": "tts_voice",
+    "목소리": "tts_voice",
+    "더빙": "tts_voice",
+    "내레이션": "tts_voice",
+
+    # 마케팅 / 광고
+    "광고": "marketing_copy",
+    "카피": "marketing_copy",
+    "랜딩페이지": "marketing_copy",
+    "세일즈": "marketing_copy",
+    "마케팅": "marketing_copy",
+
+    # SNS / 콘텐츠 기획
+    "콘텐츠": "social_content",
+    "컨텐츠": "social_content",
+    "인스타": "social_content",
+    "피드": "social_content",
+
+    # 일정 / 업무 자동화
+    "일정": "productivity_automation",
+    "캘린더": "productivity_automation",
+    "자동화": "productivity_automation",
+    "에이전트": "productivity_automation",
+    "잡일": "productivity_automation"
 }
 
 
 def classify_task(user_text: str) -> str:
-    """사용자 입력을 보고 작업 카테고리를 간단히 분류하는 함수 
+    """사용자 입력을 보고 작업 카테고리를 간단히 분류하는 함수.
     일치하는 키워드가 없으면 기본값으로 document_writing을 사용.
     """
     text = user_text.strip()
@@ -257,15 +404,12 @@ def classify_task(user_text: str) -> str:
 
 
 # 3. 카테고리별 도구 추천 함수
-
 def recommend_tools(category: str) -> List[Dict[str, str]]:
-    """카테고리에 해당하는 AI 도구 리스트 반환.
-    정의되지 않은 카테고리면 빈 리스트 반환.
-    """
+    """카테고리에 해당하는 AI 도구 리스트 반환."""
     return ai_tools.get(category, [])
 
 
-# 4. 전체 흐름 실행 함수 
+# 4. 전체 흐름 실행 함수
 def run_iai_once():
     print("===== IAI =====")
     user_text = input("지금 뭐 하려고 하는지 편하게 한 줄로 써주세요 :)\n> ")
@@ -277,7 +421,7 @@ def run_iai_once():
     tools = recommend_tools(category)
 
     if not tools:
-        print("\n[추천 결과]\n- 현재 카테고리에 매핑된 도구가 없습니다. 카테고리/키워드를 확장해 주세요.")
+        print("\n[추천 결과]\n- 아직 이 상황에 맞춰 둔 AI 도구가 없습니다. 키워드를 조금 바꿔서 다시 시도해 주세요.")
         return
 
     print("\n[추천]")
